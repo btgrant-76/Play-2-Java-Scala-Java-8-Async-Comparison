@@ -3,10 +3,14 @@ package controllers
 import scala.concurrent.Future
 import scala.collection.immutable.Map
 import play.api.i18n.Lang
-import play.api.mvc._
+import play.api.mvc.Action._
+import play.api.mvc.Controller
 import play.Logger
-import play.api.libs.ws._
+import play.api.libs.ws.Response
+import play.api.libs.ws.WS
 import concurrent.ExecutionContext.Implicits.global
+import play.api.mvc.Action
+import play.api.mvc.Result
 
 // TODO:  calling Async within Action is deprecated; refactor.
 object LinkedInController extends Controller {
@@ -65,15 +69,36 @@ object LinkedInController extends Controller {
   def sequential = Action.async {
     val foo = WS.url("http://www.foo.com").get()
 
-      foo.flatMap { fooResponse => 
-        // Use data in fooResponse to build the second request
-        val bar = WS.url("http://www.bar.com/" + paramsFromFoo(fooResponse)).get()
+    foo.flatMap { fooResponse => 
+      // Use data in fooResponse to build the second request
+      val bar = WS.url("http://www.bar.com/" + paramsFromFoo(fooResponse)).get()
 
-        bar.map { barResponse => 
-          // Now you can use barResponse and fooResponse to build a Result
-          Ok(s"response from foo.com is ${fooResponse.status} & from bar.com is ${barResponse.status}")
-        }
+      bar.map { barResponse => 
+        // Now you can use barResponse and fooResponse to build a Result
+        Ok(s"response from foo.com is ${fooResponse.status} & from bar.com is ${barResponse.status}")
       }
+    }
+  }
+
+  // Handle Exceptions in Futures by logging them and returning a fallback value
+  def withErrorHandling[T](f: Future[T], fallback: T): Future[T] = {
+    f.recover { case t: Throwable => 
+      Logger.error("Something went wrong!", t)
+      fallback
+    }
+  }
+
+  def checkHostName(hostName: String) = Action.async {
+    // try using "thisdomaindoesnotexist" 
+    val myFuture = WS.url(s"http://www.${hostName}.com").get()
+                   .map { resp => resp.statusText }
+    val myFutureWithFallback = withErrorHandling(myFuture, "fallback value")
+
+    myFutureWithFallback.map { str => 
+      // str either contains the result of myFuture's async I/O or 
+      // "fallback value" if any Exception was thrown
+      Ok(str)
+    }
   }
 
 }

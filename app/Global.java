@@ -8,7 +8,8 @@ import services.PojoService;
 
 
 public class Global extends GlobalSettings {
-    @Override
+
+    /*@Override
     public void onStart(Application app) {
         Akka.system()
             .scheduler()
@@ -21,6 +22,6 @@ public class Global extends GlobalSettings {
                 }
             },
             Akka.system().dispatcher());
-    }
+    }*/
 
 }

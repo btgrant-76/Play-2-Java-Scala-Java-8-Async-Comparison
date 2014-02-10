@@ -3,6 +3,7 @@ package controllers;
 import java.util.concurrent.Callable;
 
 import play.Logger;
+import play.Play;
 import play.libs.F;
 import play.libs.WS;
 import play.mvc.Controller;
@@ -40,6 +41,10 @@ public class Application extends Controller {
       WS.url("http://www.giantbomb.com/api/character/3005-175/?api_key=06cfd9fb987868517f54832da87b86477b8a53ad")
         .get();
      return TODO; 
+    }
+    
+    public static Result config() {
+      return ok(Play.application().configuration().getString("file.config"));
     }
   
 }

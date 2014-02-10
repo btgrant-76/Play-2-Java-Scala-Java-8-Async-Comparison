@@ -4,12 +4,15 @@
 
 # Home page
 GET     /                           controllers.Application.index()
+GET     /config                     controllers.Application.config()
 
 GET     /hello                      controllers.LinkedInController.index()
-# GET     /hello_lower                controllers.LinkedInController.indexLower()
 GET     /proxy                      controllers.LinkedInController.proxy()
 GET     /parallel_ws                controllers.LinkedInController.parallel()
-GET     /sequential_ws                controllers.LinkedInController.sequential()
+GET     /sequential_ws              controllers.LinkedInController.sequential()
+GET     /check_www/:hostName        controllers.LinkedInController.checkHostName(hostName: String)
+
+GET     /java/hello                 controllers.LinkedInJavaController.index()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

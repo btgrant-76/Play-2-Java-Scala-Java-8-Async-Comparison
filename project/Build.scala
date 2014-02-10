@@ -1,6 +1,7 @@
 import sbt._
 import Keys._
 import play.Project._
+import com.github.play2war.plugin._
 
 object ApplicationBuild extends Build {
 
@@ -14,8 +15,13 @@ object ApplicationBuild extends Build {
     javaEbean
   )
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
-    // Add your own project settings here      
+  val main = play.Project(appName, appVersion, appDependencies)
+    .settings(Play2WarPlugin.play2WarSettings:_*)
+    .settings(
+      // Add your own project settings here      
+      javaOptions in (Test) += "-ea",
+      // javaOptions in (Test) += "-javaagent:/Users/bgrant/projects/InvestMe_service/lib/jmockit.jar"
+      Play2WarKeys.servletVersion := "2.5"
   )
 
 }
