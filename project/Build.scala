@@ -1,3 +1,4 @@
+import _root_.sbt.Keys._
 import sbt._
 import Keys._
 import play.Project._
@@ -21,7 +22,8 @@ object ApplicationBuild extends Build {
       // Add your own project settings here      
       javaOptions in (Test) += "-ea",
       // javaOptions in (Test) += "-javaagent:/Users/bgrant/projects/InvestMe_service/lib/jmockit.jar"
-      Play2WarKeys.servletVersion := "2.5"
+      Play2WarKeys.servletVersion := "2.5",
+      javacOptions in Compile ++= Seq("-source", "1.8", "-target", "1.8")
   )
 
 }
