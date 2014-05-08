@@ -1,9 +1,6 @@
 package controllers
 
 import scala.concurrent.Future
-import scala.collection.immutable.Map
-import play.api.i18n.Lang
-import play.api.mvc.Action._
 import play.api.mvc.Controller
 import play.Logger
 import play.api.libs.ws.Response
@@ -52,14 +49,14 @@ object LinkedInController extends Controller {
 
   def parallel = Action.async {
     val start = System.currentTimeMillis()
-    def getLatency(r: Any): Long = System.currentTimeMillis() - start 
+    def getLatency(r: Any): Long = System.currentTimeMillis() - start
 
     val google = WS.url("http://google.com").get().map(getLatency)
     val yahoo = WS.url("http://yahoo.com").get().map(getLatency)
 
-    google.flatMap { googleResponseTime: Long => 
-      yahoo.map { yahooResponseTime: Long => 
-        Ok(s"Google response time:${googleResponseTime}; Yahoo response time: ${yahooResponseTime}")
+    google.flatMap { googleResponseTime: Long =>
+      yahoo.map { yahooResponseTime: Long =>
+        Ok(s"Google response time:  ${googleResponseTime}; Yahoo response time: ${yahooResponseTime}")
       }
     }
   }
@@ -69,11 +66,11 @@ object LinkedInController extends Controller {
   def sequential = Action.async {
     val foo = WS.url("http://www.foo.com").get()
 
-    foo.flatMap { fooResponse => 
+    foo.flatMap { fooResponse =>
       // Use data in fooResponse to build the second request
       val bar = WS.url("http://www.bar.com/" + paramsFromFoo(fooResponse)).get()
 
-      bar.map { barResponse => 
+      bar.map { barResponse =>
         // Now you can use barResponse and fooResponse to build a Result
         Ok(s"response from foo.com is ${fooResponse.status} & from bar.com is ${barResponse.status}")
       }
@@ -82,7 +79,7 @@ object LinkedInController extends Controller {
 
   // Handle Exceptions in Futures by logging them and returning a fallback value
   def withErrorHandling[T](f: Future[T], fallback: T): Future[T] = {
-    f.recover { case t: Throwable => 
+    f.recover { case t: Throwable =>
       Logger.error("Something went wrong!", t)
       fallback
     }
@@ -94,8 +91,8 @@ object LinkedInController extends Controller {
                    .map { resp => resp.statusText }
     val myFutureWithFallback = withErrorHandling(myFuture, "fallback value")
 
-    myFutureWithFallback.map { str => 
-      // str either contains the result of myFuture's async I/O or 
+    myFutureWithFallback.map { str =>
+      // str either contains the result of myFuture's async I/O or
       // "fallback value" if any Exception was thrown
       Ok(str)
     }
