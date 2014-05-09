@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
 
@@ -28,7 +29,7 @@ public class LinkedInJavaController extends Controller {
     static final Function<String, Integer> strlen = new Function<String, Integer>() {
         @Override
         public Integer apply(String str) throws Throwable {
-            return Integer.valueOf(str.length());
+            return str.length();
         }
     };
 
@@ -67,17 +68,16 @@ public class LinkedInJavaController extends Controller {
 
     public static Result index() throws Throwable {
         final Collection<String> loweredNames = map(lower, names);
-        out.println(loweredNames);
+        out.println(format("%s.map(lower) yields %s", names, loweredNames));
 
-        final Collection<Integer> lengthOfNames = map(strlen, names);
-        out.println(lengthOfNames);
+        final Collection<Integer> lengthsOfNames = map(strlen, names);
+        out.println(format("%s.map(strlen) yields %s", names, lengthsOfNames));
 
         final Collection<List<Character>> explodedNames = map(explode, names);
-        out.println(explodedNames);
+        out.println(format("%s.map(explode) yields %s", names, explodedNames));
 
         final Collection<Character> flattenedExplodedNames = flatMap(explode, names);
-        out.println(flattenedExplodedNames);
-
+        out.println(format("%s.map(explodeToStream) yields %s", names, flattenedExplodedNames));
 
         return ok(map(lower, "Hello World"));
     }
@@ -98,6 +98,33 @@ public class LinkedInJavaController extends Controller {
         );
         Logger.info("After map");
         return resultPromise;
+    }
+
+    public static F.Promise<Result> parallel() {
+        final long start = System.currentTimeMillis();
+
+        final Function<WS.Response, Long> getLatency = new Function<WS.Response, Long>() {
+            @Override
+            public Long apply(WS.Response response) throws Throwable {
+                return System.currentTimeMillis() - start;
+            }
+        };
+
+        F.Promise<Long> googleLatency = WS.url("http://google.com").get().map(getLatency);
+        F.Promise<Long> yahooLatency = WS.url("http://yahoo.com").get().map(getLatency);
+
+        return googleLatency.flatMap(new Function<Long, F.Promise<Result>>() {
+            @Override
+            public F.Promise<Result> apply(Long googleResponseTime) throws Throwable {
+                return yahooLatency.map(new Function<Long, Result>() {
+                    @Override
+                    public Result apply(Long yahooResponseTime) throws Throwable {
+                        return ok(format("Google response time:  %d; Yahoo response time:  %d",
+                                         googleResponseTime, yahooResponseTime));
+                    }
+                });
+            }
+        });
     }
 
 }
