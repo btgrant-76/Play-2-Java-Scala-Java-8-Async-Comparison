@@ -15,7 +15,9 @@ object LinkedInController extends Controller {
   val names: List[String] = List("Jim", "Dean", "Kunal")
 
   def lower(str: String): String = str.toLowerCase()
+
   def strlen(str: String): Int = str.length
+
   def explode(str: String): List[Char] = str.toCharArray().toList
 
   def index = Action {
@@ -38,9 +40,10 @@ object LinkedInController extends Controller {
     val responseFuture: Future[Response] = WS.url("http://example.com").get()
 
     Logger.info("Before map")
-    val resultFuture: Future[Result] = responseFuture.map { resp =>
-      Logger.info("Within map")
-      Status(resp.status)(resp.body).as(resp.ahcResponse.getContentType)
+    val resultFuture: Future[Result] = responseFuture.map {
+      resp =>
+        Logger.info("Within map")
+        Status(resp.status)(resp.body).as(resp.ahcResponse.getContentType)
     }
     Logger.info("After map")
 
@@ -54,10 +57,12 @@ object LinkedInController extends Controller {
     val google = WS.url("http://google.com").get().map(getLatency)
     val yahoo = WS.url("http://yahoo.com").get().map(getLatency)
 
-    google.flatMap { googleResponseTime: Long =>
-      yahoo.map { yahooResponseTime: Long =>
-        Ok(s"Google response time:  ${googleResponseTime}; Yahoo response time: ${yahooResponseTime}")
-      }
+    google.flatMap {
+      googleResponseTime: Long =>
+        yahoo.map {
+          yahooResponseTime: Long =>
+            Ok(s"Google response time:  ${googleResponseTime}; Yahoo response time: ${yahooResponseTime}")
+        }
     }
   }
 
@@ -66,35 +71,41 @@ object LinkedInController extends Controller {
   def sequential = Action.async {
     val foo = WS.url("http://www.foo.com").get()
 
-    foo.flatMap { fooResponse =>
-      // Use data in fooResponse to build the second request
-      val bar = WS.url("http://www.bar.com/" + paramsFromFoo(fooResponse)).get()
+    foo.flatMap {
+      fooResponse =>
+        // Use data in fooResponse to build the second request
+        val bar = WS.url("http://www.bar.com/" + paramsFromFoo(fooResponse)).get()
 
-      bar.map { barResponse =>
-        // Now you can use barResponse and fooResponse to build a Result
-        Ok(s"response from foo.com is ${fooResponse.status} & from bar.com is ${barResponse.status}")
-      }
+        bar.map {
+          barResponse =>
+            // Now you can use barResponse and fooResponse to build a Result
+            Ok(s"response from foo.com is ${fooResponse.status} & from bar.com is ${barResponse.status}")
+        }
     }
   }
 
   // Handle Exceptions in Futures by logging them and returning a fallback value
   def withErrorHandling[T](f: Future[T], fallback: T): Future[T] = {
-    f.recover { case t: Throwable =>
-      Logger.error("Something went wrong!", t)
-      fallback
+    f.recover {
+      case t: Throwable =>
+        Logger.error("Something went wrong!", t)
+        fallback
     }
   }
 
   def checkHostName(hostName: String) = Action.async {
     // try using "thisdomaindoesnotexist" 
     val myFuture = WS.url(s"http://www.${hostName}.com").get()
-                   .map { resp => resp.statusText }
+      .map {
+      resp => resp.statusText
+    }
     val myFutureWithFallback = withErrorHandling(myFuture, "fallback value")
 
-    myFutureWithFallback.map { str =>
-      // str either contains the result of myFuture's async I/O or
-      // "fallback value" if any Exception was thrown
-      Ok(str)
+    myFutureWithFallback.map {
+      str =>
+        // str either contains the result of myFuture's async I/O or
+        // "fallback value" if any Exception was thrown
+        Ok(str)
     }
   }
 
