@@ -6,18 +6,18 @@
 GET     /                           controllers.Application.index()
 GET     /config                     controllers.Application.config()
 
-GET     /hello                      controllers.LinkedInController.index()
-GET     /proxy                      controllers.LinkedInController.proxy()
-GET     /parallel_ws                controllers.LinkedInController.parallel()
-GET     /sequential_ws              controllers.LinkedInController.sequential()
-GET     /check_www/:hostName        controllers.LinkedInController.checkHostName(hostName: String)
+GET     /scala/hello                      controllers.LinkedInController.index()
+GET     /scala/proxy                      controllers.LinkedInController.proxy()
+GET     /scala/parallel_ws                controllers.LinkedInController.parallel()
+GET     /scala/sequential_ws              controllers.LinkedInController.sequential()
+GET     /scala/check_www/:hostName        controllers.LinkedInController.checkHostName(hostName: String)
 
-GET     /java/hello                 controllers.LinkedInJavaController.index()
-GET     /java/proxy                 controllers.LinkedInJavaController.proxy()
+GET     /java/hello                       controllers.LinkedInJavaController.index()
+GET     /java/proxy                       controllers.LinkedInJavaController.proxy()
 
-GET     /java8/hello                controllers.LinkedInJava8Controller.index()
-GET     /java8/proxy                controllers.LinkedInJava8Controller.proxy()
-GET     /java8/parallel_ws          controllers.LinkedInJava8Controller.parallel()
+GET     /java8/hello                      controllers.LinkedInJava8Controller.index()
+GET     /java8/proxy                      controllers.LinkedInJava8Controller.proxy()
+GET     /java8/parallel_ws                controllers.LinkedInJava8Controller.parallel()
 
 GET     /news                       controllers.NewsController.newsList()
 
