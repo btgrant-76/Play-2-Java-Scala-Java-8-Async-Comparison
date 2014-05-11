@@ -9,7 +9,11 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import play.Logger;
 import play.Play;
+import play.libs.F.Promise;
+import play.libs.WS;
+import play.libs.WS.Response;
 import play.mvc.Content;
 import play.test.WithApplication;
 
@@ -41,6 +45,27 @@ public class ApplicationTest extends WithApplication {
       conf.put("file.config", "farfle");
       start(fakeApplication(conf));
       assertEquals("farfle", Play.application().configuration().getString("file.config"));
+    }
+    
+    @Test
+    public void mshxml() throws InterruptedException {
+      Promise<Response> pr = WS.url("http://msuxml.morningstar.com/IndexTS")
+        .setQueryParameter("username", "MoMo12095")
+        .setQueryParameter("password", "Z87ZxH")
+        .setQueryParameter("instrument", "29.10.@CCO")
+        .setQueryParameter("interval", "5")
+        .setQueryParameter("type", "bar")
+        .setQueryParameter("tradingdays", "1")
+        .setFollowRedirects(true)
+//        .setContentType(arg0)
+        .get();
+      
+      while (!pr.wrapped().isCompleted()) {
+        Thread.sleep(1_000);
+      }
+      
+      System.out.println(pr.get().getUri().toString());
+      System.out.println(pr.get().getBody());
     }
    
 }

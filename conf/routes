@@ -2,24 +2,23 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET     /                           controllers.Application.index()
-GET     /config                     controllers.Application.config()
+GET     /scala/hello                      controllers.ScalaController.index()
+GET     /scala/proxy                      controllers.ScalaController.proxy()
+GET     /scala/parallel_ws                controllers.ScalaController.parallel()
+GET     /scala/sequential_ws              controllers.ScalaController.sequential()
+GET     /scala/check_www/:hostName        controllers.ScalaController.checkHostName(hostName: String)
 
-GET     /scala/hello                      controllers.LinkedInController.index()
-GET     /scala/proxy                      controllers.LinkedInController.proxy()
-GET     /scala/parallel_ws                controllers.LinkedInController.parallel()
-GET     /scala/sequential_ws              controllers.LinkedInController.sequential()
-GET     /scala/check_www/:hostName        controllers.LinkedInController.checkHostName(hostName: String)
+GET     /java/hello                       controllers.JavaController.index()
+GET     /java/proxy                       controllers.JavaController.proxy()
+GET     /java/parallel_ws                 controllers.JavaController.parallel()
+GET     /java/sequential_ws               controllers.JavaController.sequential()
+GET     /java/check_www/:hostName         controllers.JavaController.checkHostName(hostName: String)
 
-GET     /java/hello                       controllers.LinkedInJavaController.index()
-GET     /java/proxy                       controllers.LinkedInJavaController.proxy()
-
-GET     /java8/hello                      controllers.LinkedInJava8Controller.index()
-GET     /java8/proxy                      controllers.LinkedInJava8Controller.proxy()
-GET     /java8/parallel_ws                controllers.LinkedInJava8Controller.parallel()
-
-GET     /news                       controllers.NewsController.newsList()
+GET     /java8/hello                      controllers.Java8Controller.index()
+GET     /java8/proxy                      controllers.Java8Controller.proxy()
+GET     /java8/parallel_ws                controllers.Java8Controller.parallel()
+GET     /java8/sequential_ws              controllers.Java8Controller.sequential()
+GET     /java8/check_www/:hostName        controllers.Java8Controller.checkHostName(hostName: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

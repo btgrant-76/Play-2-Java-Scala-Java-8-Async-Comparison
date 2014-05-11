@@ -1,4 +1,24 @@
-This is your new Play 2.1 application
-=====================================
+TODO:  remove throws Throwable from anonymous inner functions
 
-This file will be packaged with your application, when using `play dist`.
+
+This project started out as an exercise in understanding the sample code in Jim {last name here}'s
+blog post {name of blog post here}.
+
+The post's sample code is all written in Scala and, while that's all well and good & I do love me
+ some Scala, the Play 2 projects I'll be working on will be written primarily in Java, at least
+ for the short term.
+
+ Scala =  99 LOC (excluding package & imports)
+
+ This being the case, I started writing JavaController which implements _all of the same
+ functionality_. Prior to Java 8, the language has no functional constructs whatsoever. I took a
+ stab at writing some building up some "functional adapters." They get the job done & are pretty
+ well generalized for this exercise. I don't know if I'd want to live with them, but I think they
+ might help to illustrate the amount of code reuse that can be accomplished with a functional style.
+
+ Java = 185 LOC, 167 if you exclude the `map` and `flatMap` adapters.
+ 166; 148 w/out imports & package
+
+ Then along comes Java 8.
+
+ 96 LOC
