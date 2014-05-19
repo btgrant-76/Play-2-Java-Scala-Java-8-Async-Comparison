@@ -8,7 +8,6 @@ import play.mvc.Result;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,8 +19,11 @@ import static java.lang.System.out;
 public class Java8Controller extends Controller {
 
   private static final List<String> names = Arrays.asList("Jim", "Dean", "Kunal");
+
   private static final Function<String, String> lower = str -> str.toLowerCase();
+
   private static final Function<String, Integer> strlen = str -> str.length();
+
   private static final Function<String, List<Character>> explode = str -> {
     final List<Character> chars = new ArrayList<>();
     for (char c : str.toCharArray()) {
@@ -30,10 +32,8 @@ public class Java8Controller extends Controller {
     return chars;
   };
 
-  private static final Function<String, Stream<Character>> explodeToStream = str -> explode.apply(str).stream();
-
-  private static F.Function3<String, Integer, Character, List<String>> dur = (str, i, ch) -> Collections.emptyList();
-
+  private static final Function<String, Stream<Character>> explodeToStream =
+      str -> explode.apply(str).stream();
 
   public static Result index() {
     final List<String> loweredNames = names.stream().map(lower).collect(Collectors.toList());
@@ -42,13 +42,15 @@ public class Java8Controller extends Controller {
     final List<Integer> lengthsOfNames = names.stream().map(strlen).collect(Collectors.toList());
     out.println(format("%s.map(strlen) yields %s", names, lengthsOfNames));
 
-    final List<List<Character>> explodedNames = names.stream().map(explode).collect(Collectors.toList());
+    final List<List<Character>> explodedNames =
+        names.stream().map(explode).collect(Collectors.toList());
     out.println(format("%s.map(explode) yields %s", names, explodedNames));
 
-    final List<Character> flattenedExplodedNames = names.stream().flatMap(explodeToStream).collect(Collectors.toList());
+    final List<Character> flattenedExplodedNames =
+        names.stream().flatMap(explodeToStream).collect(Collectors.toList());
     out.println(format("%s.map(explodeToStream) yields %s", names, flattenedExplodedNames));
 
-    return ok();
+    return ok(Arrays.asList("Hello World").stream().map(lower).collect(Collectors.toList()).get(0));
   }
 
   public static F.Promise<Result> proxy() {
@@ -75,7 +77,7 @@ public class Java8Controller extends Controller {
     return googleLatency.flatMap(googleResponseTime ->
             yahooLatency.map(yahooResponseTime ->
                 ok(format("Google response time:  %d; Yahoo response time:  %d",
-                          googleResponseTime, yahooResponseTime)))
+                    googleResponseTime, yahooResponseTime)))
     );
   }
 

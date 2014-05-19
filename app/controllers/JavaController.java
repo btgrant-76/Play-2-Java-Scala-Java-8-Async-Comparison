@@ -96,13 +96,13 @@ public class JavaController extends Controller {
           }
         }
     );
+
     Logger.info("After map");
     return resultPromise;
   }
 
   public static F.Promise<Result> parallel() {
     final long start = System.currentTimeMillis();
-
     final Function<WS.Response, Long> getLatency = new Function<WS.Response, Long>() {
       @Override
       public Long apply(WS.Response response) {
@@ -120,7 +120,7 @@ public class JavaController extends Controller {
           @Override
           public Result apply(Long yahooResponseTime) {
             return ok(format("Google response time:  %d; Yahoo response time:  %d",
-                googleResponseTime, yahooResponseTime));
+                             googleResponseTime, yahooResponseTime));
           }
         });
       }
