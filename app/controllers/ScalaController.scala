@@ -6,6 +6,7 @@ import play.Logger
 import play.api.libs.ws.WS
 import concurrent.ExecutionContext.Implicits.global
 import play.api.mvc.Action
+import play.api.Play.current
 
 object ScalaController extends Controller {
 
@@ -39,7 +40,7 @@ object ScalaController extends Controller {
     Logger.info("Before map")
     val resultFuture = responseFuture.map { resp =>
         Logger.info("Within map")
-        Status(resp.status)(resp.body).as(resp.ahcResponse.getContentType)
+        Status(resp.status)(resp.body).as(resp.header("Content-Type").get)
     }
 
     Logger.info("After map")

@@ -2,7 +2,8 @@ package controllers;
 
 import play.Logger;
 import play.libs.F;
-import play.libs.WS;
+import play.libs.ws.WS;
+import play.libs.ws.WSResponse;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -54,7 +55,7 @@ public class Java8Controller extends Controller {
   }
 
   public static F.Promise<Result> proxy() {
-    final F.Promise<WS.Response> responsePromise = WS.url("http://example.com").get();
+    final F.Promise<WSResponse> responsePromise = WS.url("http://example.com").get();
 
     Logger.info("Before map");
     final F.Promise<Result> resultPromise = responsePromise.map((wsResponse) -> {
@@ -69,7 +70,7 @@ public class Java8Controller extends Controller {
 
   public static F.Promise<Result> parallel() {
     final long start = System.currentTimeMillis();
-    final F.Function<WS.Response, Long> getLatency = resp -> System.currentTimeMillis() - start;
+    final F.Function<WSResponse, Long> getLatency = resp -> System.currentTimeMillis() - start;
 
     F.Promise<Long> googleLatency = WS.url("http://google.com").get().map(getLatency);
     F.Promise<Long> yahooLatency = WS.url("http://yahoo.com").get().map(getLatency);
@@ -86,11 +87,11 @@ public class Java8Controller extends Controller {
   }
 
   public static F.Promise<Result> sequential() {
-    final F.Promise<WS.Response> foo = WS.url("http://www.foo.com").get();
+    final F.Promise<WSResponse> foo = WS.url("http://www.foo.com").get();
 
     return foo.flatMap(fooResponse -> {
       // Use data in fooResponse to build the second request
-      final F.Promise<WS.Response> bar = WS.url("http://www.bar.com" + paramsFromFoo(fooResponse)).get();
+      final F.Promise<WSResponse> bar = WS.url("http://www.bar.com" + paramsFromFoo(fooResponse)).get();
 
       return bar.map(barResponse -> {
         // Now you can use barResponse and fooResponse to build a Result

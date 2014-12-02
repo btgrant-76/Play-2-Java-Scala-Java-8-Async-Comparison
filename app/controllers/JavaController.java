@@ -3,7 +3,8 @@ package controllers;
 import play.Logger;
 import play.libs.F;
 import play.libs.F.Function;
-import play.libs.WS;
+import play.libs.ws.WS;
+import play.libs.ws.WSResponse;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -83,13 +84,13 @@ public class JavaController extends Controller {
   }
 
   public static F.Promise<Result> proxy() {
-    final F.Promise<WS.Response> responsePromise = WS.url("http://example.com").get();
+    final F.Promise<WSResponse> responsePromise = WS.url("http://example.com").get();
 
     Logger.info("Before map");
     final F.Promise<Result> resultPromise = responsePromise.map(
-        new Function<WS.Response, Result>() {
+        new Function<WSResponse, Result>() {
           @Override
-          public Result apply(WS.Response wsResponse) {
+          public Result apply(WSResponse wsResponse) {
             Logger.info("Within map");
             response().setContentType(wsResponse.getHeader("Content-Type"));
             return ok(wsResponse.getBody());
@@ -103,9 +104,9 @@ public class JavaController extends Controller {
 
   public static F.Promise<Result> parallel() {
     final long start = System.currentTimeMillis();
-    final Function<WS.Response, Long> getLatency = new Function<WS.Response, Long>() {
+    final Function<WSResponse, Long> getLatency = new Function<WSResponse, Long>() {
       @Override
-      public Long apply(WS.Response response) {
+      public Long apply(WSResponse response) {
         return System.currentTimeMillis() - start;
       }
     };
@@ -132,18 +133,18 @@ public class JavaController extends Controller {
   }
 
   public static F.Promise<Result> sequential() {
-    final F.Promise<WS.Response> foo = WS.url("http://www.foo.com").get();
+    final F.Promise<WSResponse> foo = WS.url("http://www.foo.com").get();
 
-    return foo.flatMap(new Function<WS.Response, F.Promise<Result>>() {
+    return foo.flatMap(new Function<WSResponse, F.Promise<Result>>() {
       @Override
-      public F.Promise<Result> apply(WS.Response fooResponse) {
+      public F.Promise<Result> apply(WSResponse fooResponse) {
         // Use data in fooResponse to build the second request
-        final F.Promise<WS.Response> bar = WS.url("http://www.bar.com/" + paramsFromFoo(fooResponse))
+        final F.Promise<WSResponse> bar = WS.url("http://www.bar.com/" + paramsFromFoo(fooResponse))
             .get();
 
-        return bar.map(new Function<WS.Response, Result>() {
+        return bar.map(new Function<WSResponse, Result>() {
           @Override
-          public Result apply(WS.Response barResponse) {
+          public Result apply(WSResponse barResponse) {
             // Now you can use barResponse and fooResponse to build a Result
             return ok(format("response from foo.com is %s & from bar.com is %s",
                 fooResponse.getStatusText(), barResponse.getStatusText()));
@@ -167,9 +168,9 @@ public class JavaController extends Controller {
   public static F.Promise<Result> checkHostName(String hostName) {
     // try using "thisdomaindoesnotexist"
     final F.Promise<String> myPromise = WS.url(format("http://www.%s.com", hostName)).get()
-        .map(new Function<WS.Response, String>() {
+        .map(new Function<WSResponse, String>() {
           @Override
-          public String apply(WS.Response response) {
+          public String apply(WSResponse response) {
             return response.getStatusText();
           }
         });
