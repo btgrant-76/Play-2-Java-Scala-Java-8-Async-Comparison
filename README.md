@@ -33,3 +33,11 @@ Since Play supports roughly the same set of operations between both Java and Sca
 * Java 8:  103 LOC
 * Java:  150 LOC
 * Java:  171 LOC including functional operations such as `map` & `flatMap`
+
+# How to Run the App
+This is a standard [Play Framework app](https://www.playframework.com/) that uses
+[Activator](https://typesafe.com/community/core-tools/activator-and-sbt) and Java 8.
+Activator is included in the project, so you only need to have Java 8 installed. In order to run
+ the project, do `./activator run`. You can read
+ [the `/conf/routes` file](https://www.playframework.com/documentation/2.3.x/ScalaRouting) to see
+ which requests will map to the controller actions in `/app/controllers/`.
